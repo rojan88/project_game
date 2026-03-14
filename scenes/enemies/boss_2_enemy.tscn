@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://boss_2_enemy"]
+
+[ext_resource type="Script" path="res://scripts/enemy_base.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://icon" path="res://icon.svg" id="2_icon"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(26, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(40, 26)
+
+[node name="Boss2Enemy" type="CharacterBody2D" groups=["enemy", "boss"]]
+collision_layer = 2
+collision_mask = 33
+script = ExtResource("1_script")
+max_health = 15
+move_speed = 35.0
+essence_drop_chance = 1.0
+attack_damage = 4
+telegraph_time = 1.2
+attack_duration = 0.45
+attack_cooldown = 2.2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.2, 0.4, 0.9, 1)
+texture = ExtResource("2_icon")
+scale = Vector2(0.2, 0.2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+position = Vector2(0, 2)
+
+[node name="AttackHitbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 1
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
+shape = SubResource("RectangleShape2D_attack")
+position = Vector2(26, 2)

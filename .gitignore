@@ -1,0 +1,36 @@
+# Godot 4+
+.godot/
+*.translation
+export_presets.cfg
+export/
+
+# Imported translations
+*.import
+
+# Mono / C#
+.mono/
+data_*/
+mono_crash.*.json
+*.csproj
+*.sln
+*.pidb
+*.booproj
+*.svd
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+builds/
+*.apk
+*.aab
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~

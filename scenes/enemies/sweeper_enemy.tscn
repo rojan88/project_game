@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://sweeper_enemy"]
+
+[ext_resource type="Script" path="res://scripts/enemy_base.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://icon" path="res://icon.svg" id="2_icon"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(18, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(32, 18)
+
+[node name="SweeperEnemy" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 2
+collision_mask = 33
+script = ExtResource("1_script")
+max_health = 5
+move_speed = 35.0
+essence_drop_chance = 0.6
+attack_damage = 2
+telegraph_time = 0.8
+attack_duration = 0.35
+attack_cooldown = 1.8
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.6, 0.4, 0.2, 1)
+texture = ExtResource("2_icon")
+scale = Vector2(0.11, 0.11)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+position = Vector2(0, 1)
+
+[node name="AttackHitbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 1
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
+shape = SubResource("RectangleShape2D_attack")
+position = Vector2(20, 1)

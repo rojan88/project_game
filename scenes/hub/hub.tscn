@@ -1,0 +1,139 @@
+[gd_scene load_steps=2 format=3 uid="uid://hub_main"]
+
+[ext_resource type="Script" path="res://scripts/hub.gd" id="1_script"]
+
+[node name="Hub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Monster Pact — Hub"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "HP: 5  Essence: 0  Lv.1  Class: —"
+
+[node name="ClassPanel" type="VBoxContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ClassTitle" type="Label" parent="MarginContainer/VBox/ClassPanel"]
+layout_mode = 2
+text = "Choose your class (once):"
+
+[node name="TankButton" type="Button" parent="MarginContainer/VBox/ClassPanel"]
+layout_mode = 2
+text = "Tank — +3 HP"
+
+[node name="HealerButton" type="Button" parent="MarginContainer/VBox/ClassPanel"]
+layout_mode = 2
+text = "Healer — +2 HP"
+
+[node name="MageButton" type="Button" parent="MarginContainer/VBox/ClassPanel"]
+layout_mode = 2
+text = "Mage — Fire Spirit free"
+
+[node name="DpsButton" type="Button" parent="MarginContainer/VBox/ClassPanel"]
+layout_mode = 2
+text = "DPS — 2 melee damage"
+
+[node name="RegionPanel" type="VBoxContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 10
+
+[node name="Region1Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 1 — Start"
+
+[node name="Region2Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 2"
+visible = false
+
+[node name="Region3Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 3"
+visible = false
+
+[node name="Region4Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 4"
+visible = false
+
+[node name="Region5Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 5"
+visible = false
+
+[node name="Region6Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 6"
+visible = false
+
+[node name="Region7Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 7"
+visible = false
+
+[node name="Region8Button" type="Button" parent="MarginContainer/VBox/RegionPanel"]
+layout_mode = 2
+text = "Region 8"
+visible = false
+
+[node name="InventoryPanel" type="VBoxContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="InventoryTitle" type="Label" parent="MarginContainer/VBox/InventoryPanel"]
+layout_mode = 2
+text = "Items"
+
+[node name="PrimaryRow" type="HBoxContainer" parent="MarginContainer/VBox/InventoryPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PrimaryLabel" type="Label" parent="MarginContainer/VBox/InventoryPanel/PrimaryRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Primary: (none)"
+
+[node name="CyclePrimaryButton" type="Button" parent="MarginContainer/VBox/InventoryPanel/PrimaryRow"]
+layout_mode = 2
+text = "Change"
+
+[node name="SecondaryRow" type="HBoxContainer" parent="MarginContainer/VBox/InventoryPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SecondaryLabel" type="Label" parent="MarginContainer/VBox/InventoryPanel/SecondaryRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Secondary: (none)"
+
+[node name="CycleSecondaryButton" type="Button" parent="MarginContainer/VBox/InventoryPanel/SecondaryRow"]
+layout_mode = 2
+text = "Change"
+
+[node name="HintLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Select a region to enter its first stage."
