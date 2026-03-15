@@ -52,6 +52,8 @@
 
 **Combat doc:** Red ground indicators; Flying & Caster enemies; status foundation + Burn DoT (Fire Spirit melee).
 
+**M2 completion (post–M1 revert):** Test arena is the one stage. Player health, take damage from enemies, death/respawn. EnemyBase: telegraphed attacks (red rectangle), Chaser/Lunge/Shooter in arena, essence drop on death. Essence pickup adds to GameState; UI updates. "Enemies cleared!" when all defeated. Status effects (Burn/Poison) remain in EnemyBase for future monster synergy (client: element from monster).
+
 **Suggested budget slice:** ~$100–$120
 
 ---

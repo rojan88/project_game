@@ -3,11 +3,11 @@
 Top-down dodge-based action RPG with monster companions.  
 **Engine:** Godot 4.x · **Target:** Android (first release)
 
-**Current state:** Reverted to **Milestone 1** scope with client design rules applied. See **[CLIENT_RULES.md](CLIENT_RULES.md)** for weapon, status, equipment, and energy/class rules before M2/M3.
+**Current state:** **Milestone 2** complete (M1 + client rules + enemies & essence loop). See **[CLIENT_RULES.md](CLIENT_RULES.md)** for design rules.
 
 ---
 
-## How to run and play (M1)
+## How to run and play (M1 + M2)
 
 ### Run the game
 
@@ -23,18 +23,19 @@ Top-down dodge-based action RPG with monster companions.
 | Attack | J |
 | Dodge  | K (cooldown only — no energy cost) |
 
-### M1 scope
+### M1 + M2 scope
 
-- One test arena with walls; player can move, attack, dodge.
-- Optional enemies (chaser, lunge) for combat testing; essence drops are collected (for future unlock).
-- **No class selection.** Dodge uses **cooldown only** (0.5 s). **Energy** is on the player for future monster abilities only.
-- Build variety (later) from: main weapon, active monster, secondary item, synergy.
+- **One test stage:** Arena with walls; player moves (WASD), attacks (J), dodges (K, cooldown only).
+- **Enemies:** Chaser, Lunge, Shooter — telegraphed attacks (red indicator), drop **Essence** on death (chance).
+- **Essence:** Walk over pickups to collect; counter in UI. Foundation for unlocking companions later (M3).
+- **Death/respawn:** At 0 HP you respawn at the start after a short delay. "Enemies cleared!" when all are defeated.
+- **No class selection.** Energy is for future monster abilities only.
 
 ---
 
 ## Milestones
 
-See **[MILESTONES.md](MILESTONES.md)** for the full plan. M2+ (enemies, essence loop, companions, regions, etc.) will be re-added after reviewing types and combat with the client; design rules are in **[CLIENT_RULES.md](CLIENT_RULES.md)**.
+See **[MILESTONES.md](MILESTONES.md)** for the full plan. M1 and M2 are complete; design rules in **[CLIENT_RULES.md](CLIENT_RULES.md)**. M3 (companions, unlock with essence) next; review types/combat with client before implementing.
 
 ---
 

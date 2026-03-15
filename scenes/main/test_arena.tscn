@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://player_monster_pact" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://chaser_enemy" path="res://scenes/enemies/chaser_enemy.tscn" id="3_chaser"]
 [ext_resource type="PackedScene" uid="uid://lunge_enemy" path="res://scenes/enemies/lunge_enemy.tscn" id="4_lunge"]
+[ext_resource type="PackedScene" uid="uid://shooter_enemy" path="res://scenes/enemies/shooter_enemy.tscn" id="5_shooter"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(600, 400)
@@ -73,6 +74,9 @@ position = Vector2(100, 140)
 [node name="Lunge1" parent="Enemies" instance=ExtResource("4_lunge")]
 position = Vector2(192, 50)
 
+[node name="Shooter1" parent="Enemies" instance=ExtResource("5_shooter")]
+position = Vector2(260, 140)
+
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(192, 108)
 
@@ -100,6 +104,23 @@ offset_top = 54.0
 offset_right = 120.0
 offset_bottom = 72.0
 text = "Essence: 0"
+
+[node name="ClearedLabel" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -14.0
+offset_right = 70.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Enemies cleared!"
+horizontal_alignment = 1
+vertical_alignment = 1
+visible = false
 
 [node name="ControlsHint" type="Label" parent="UI"]
 anchors_preset = 12
