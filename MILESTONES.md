@@ -60,7 +60,11 @@
 
 ## Milestone 3 — Companion & capture (essence-based)
 
-**Goal:** Essence unlocks companions; one active companion with auto-attack + one special ability.
+**Client framing (aligned):** **Combat + Inventory + Survival mechanics** — see **[CLIENT_MESSAGE_REPLY_M3.md](CLIENT_MESSAGE_REPLY_M3.md)** for suggested client reply and procedural-generation options.
+
+**Goal:** Essence unlocks companions; one active companion with auto-attack + one special ability. Inventory/equipment per **CLIENT_RULES.md** (main weapon = pattern/stats; secondary = passives; element from monster). **Survival mechanics** — confirm scope with client (e.g. waves, resource pressure, run rules).
+
+**M3 implementation (current):** See **[MONSTER_STATUS_SPEC.md](MONSTER_STATUS_SPEC.md)** for full status math. **MonsterConfig** — 9 monsters (Fire/Frost/Poison/Storm/Stone/Shadow/Nature/Spirit/Neutral). **WeaponConfig** + **SecondaryItemConfig** (GDD slots). **EnemyBase** — Burn, Freeze, Poison, Stone stun, Root, Expose, Shadow Mark, pierce + storm chain via **CombatEffects**. **Player** — weapon/secondary scaling, Spirit pierce, Shadow 1s post-dodge window, **L** special (energy), **Tab** cycle, **U** unlock. Starter **neutral_blob** unlocked; others cost essence. **Survival** passives via secondary items (e.g. Band +HP, Focus +energy). Nature **area root zones** marked future in spec doc.
 
 | # | Task | Description |
 |---|------|-------------|

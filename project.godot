@@ -22,7 +22,11 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+MonsterConfig="*res://scripts/monster_config.gd"
+WeaponConfig="*res://scripts/weapon_config.gd"
+SecondaryItemConfig="*res://scripts/secondary_item_config.gd"
 GameState="*res://scripts/game_state.gd"
+CombatEffects="*res://scripts/combat_effects.gd"
 CompanionConfig="*res://scripts/companion_config.gd"
 ItemConfig="*res://scripts/item_config.gd"
 StageConfig="*res://scripts/stage_config.gd"

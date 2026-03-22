@@ -1,11 +1,9 @@
 extends Area2D
-## Projectile spawned by companion: moves in direction, damages first enemy hit, grants companion exp.
+## Companion projectile: damage + monster-type effects via CombatEffects (M3).
 
 var velocity: Vector2 = Vector2.ZERO
 var damage: int = 1
 var companion_id: StringName = &""
-var status_effect: StringName = &""   # e.g. &"poison" for Plant Sprite
-var status_duration: float = 0.0
 var _hit: bool = false
 
 func _ready() -> void:
@@ -22,7 +20,6 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	if body.is_in_group("enemy") and body.has_method("take_damage"):
 		_hit = true
-		body.take_damage(damage)
-		if status_effect != &"" and status_duration > 0.0 and body.has_method("add_status"):
-			body.add_status(status_effect, status_duration)
+		body.take_damage(damage, EnemyBase.DMG_FLAG_RAW)
+		CombatEffects.apply_companion_projectile_hit(body, damage, companion_id)
 		queue_free()

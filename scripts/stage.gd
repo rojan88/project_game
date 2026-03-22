@@ -83,7 +83,7 @@ func _update_hud() -> void:
 		if GameState.active_companion_id.is_empty():
 			cl.text = "Companion: (U unlock: 3)"
 		else:
-			var name_str: String = CompanionConfig.get_display_name(GameState.active_companion_id)
+			var name_str: String = MonsterConfig.get_display_name(GameState.active_companion_id)
 			var lv: int = GameState.get_companion_level(GameState.active_companion_id)
 			cl.text = "Companion: %s Lv.%d" % [name_str, lv]
 

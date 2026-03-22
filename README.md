@@ -3,7 +3,7 @@
 Top-down dodge-based action RPG with monster companions.  
 **Engine:** Godot 4.x · **Target:** Android (first release)
 
-**Current state:** **Milestone 2** complete (M1 + client rules + enemies & essence loop). See **[CLIENT_RULES.md](CLIENT_RULES.md)** for design rules.
+**Current state:** **Milestone 3** combat + inventory systems implemented. See **[CLIENT_RULES.md](CLIENT_RULES.md)**, **[MONSTER_STATUS_SPEC.md](MONSTER_STATUS_SPEC.md)** (client status numbers), and **[CLIENT_MESSAGE_REPLY_M3.md](CLIENT_MESSAGE_REPLY_M3.md)**.
 
 ---
 
@@ -23,19 +23,17 @@ Top-down dodge-based action RPG with monster companions.
 | Attack | J |
 | Dodge  | K (cooldown only — no energy cost) |
 
-### M1 + M2 scope
+### M1 + M2 + M3 scope
 
-- **One test stage:** Arena with walls; player moves (WASD), attacks (J), dodges (K, cooldown only).
-- **Enemies:** Chaser, Lunge, Shooter — telegraphed attacks (red indicator), drop **Essence** on death (chance).
-- **Essence:** Walk over pickups to collect; counter in UI. Foundation for unlocking companions later (M3).
-- **Death/respawn:** At 0 HP you respawn at the start after a short delay. "Enemies cleared!" when all are defeated.
-- **No class selection.** Energy is for future monster abilities only.
+- **Test arena:** Same as M2, plus **active monster** (starts as **Neutral Blob** — Expose on hit). **Tab** cycles unlocked monsters; **U** unlocks next in roster (essence cost); **L** uses **monster special** (costs **Energy**). Dodge stays **cooldown-only**; energy regens for specials.
+- **Weapons & secondaries:** `GameState.main_weapon_id` (default **sword**) and `secondary_item_id` — stats from **WeaponConfig** / **SecondaryItemConfig** (GDD). Monster type defines **status effects** on hit (not the weapon).
+- **Status effects:** Full implementation per client spec — Burn, Freeze, Poison stacks, Storm chain lightning, Stone stun, Shadow mark after dodge, Nature root chance, Spirit melee pierce (3 targets, 100/90/80%), Neutral Expose. Details: **[MONSTER_STATUS_SPEC.md](MONSTER_STATUS_SPEC.md)**.
 
 ---
 
 ## Milestones
 
-See **[MILESTONES.md](MILESTONES.md)** for the full plan. M1 and M2 are complete; design rules in **[CLIENT_RULES.md](CLIENT_RULES.md)**. M3 (companions, unlock with essence) next; review types/combat with client before implementing.
+See **[MILESTONES.md](MILESTONES.md)**. M3 core combat + inventory + monster effects are in; optional survival layers (waves, hunger, etc.) can be agreed with the client.
 
 ---
 

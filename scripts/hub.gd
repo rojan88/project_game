@@ -100,6 +100,9 @@ func _update_inventory_labels() -> void:
 func _item_display_name(item_id: StringName) -> String:
 	if item_id.is_empty():
 		return "(none)"
+	var wn: String = WeaponConfig.get_display_name(item_id)
+	if wn != str(item_id):
+		return wn
 	return ItemConfig.get_display_name(item_id)
 
 

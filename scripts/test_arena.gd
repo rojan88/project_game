@@ -47,6 +47,13 @@ func _update_essence_label(_total: int, _type: StringName) -> void:
 	var el = get_node_or_null("UI/EssenceLabel")
 	if el is Label:
 		el.text = "Essence: %d" % GameState.get_essence_count()
+	var ml = get_node_or_null("UI/MonsterLabel")
+	if ml is Label:
+		var mid: StringName = GameState.active_companion_id
+		if mid.is_empty():
+			ml.text = "Monster: —"
+		else:
+			ml.text = "Monster: %s" % MonsterConfig.get_display_name(mid)
 
 
 func _process(_delta: float) -> void:

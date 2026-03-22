@@ -105,6 +105,13 @@ offset_right = 120.0
 offset_bottom = 72.0
 text = "Essence: 0"
 
+[node name="MonsterLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 76.0
+offset_right = 220.0
+offset_bottom = 94.0
+text = "Monster: Neutral Blob"
+
 [node name="ClearedLabel" type="Label" parent="UI"]
 anchors_preset = 8
 anchor_left = 0.5
@@ -134,7 +141,7 @@ offset_right = -8.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "WASD move | J attack | K dodge"
+text = "WASD move | J attack | K dodge | L special | Tab monster | U unlock"
 horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 2
