@@ -81,6 +81,14 @@
 
 **Suggested budget slice:** ~$120–$150
 
+**Milestone 3 — client QA closure (post-review):**
+
+- **Inventory in default flow:** Main scene runs **Hub** first; **Test Arena (practice)** from Hub validates weapon/secondary swaps during combat (UI buttons + `[` `]` / `,` `.` keybinds). Returning to Hub persists via save.
+- **XP:** `GameState.add_player_exp` is implemented (level cap 10, HP growth on level); stage clear continues to award XP.
+- **Hub UI:** Secondary slot display names resolve through **SecondaryItemConfig** (not raw IDs). Primary/secondary cycling uses **WeaponConfig.WEAPON_IDS** and **SecondaryItemConfig.ITEM_IDS** (inventory IDs merged when present).
+- **Data hygiene:** **CompanionConfig** autoload removed (MonsterConfig remains authoritative). Companion unlock deducts **essence_by_type** in line with total essence spend.
+- **M4 foundations started here:** `SaveSystem` (`user://monster_pact_save.json`), `AudioManager` (optional `res://audio/*.wav` on Master bus), equipment/save hooks on equip and progression.
+
 ---
 
 ## Milestone 4 — World structure & progression
@@ -98,7 +106,7 @@
 
 **Deliverable:** Hub → choose region → play stages → boss → next region; basic level and inventory.
 
-**M4 completion notes:** 4.1–4.5 already in place (hub, 5 regions × 3 stages, progression, boss stages, player level cap 10). 4.6: Starter items on class selection (Mage/DPS: Flame Sword; Tank/Healer: Vital Herb); hub Inventory panel with Primary/Secondary labels and “Change” buttons to cycle equip from inventory.
+**M4 completion notes:** Hub is the **default** run scene. Class pick panel is optional/hidden so regions and inventory are always available. **Save/load** autoload persists essence, unlocks, equipment, progression, and stage unlocks; arena **pause menu** (Esc) offers Resume, Save, Load, Return to Hub. **AudioManager** plays hit/dodge/ability/UI when matching files exist under `res://audio/`. **Player** reapplies loadout on `equipment_changed` / `player_progress_changed`. Test arena equipment HUD + Hub practice entry complete the **inventory verification** loop from QA.
 
 **Suggested budget slice:** ~$120–$150
 

@@ -1,12 +1,14 @@
 extends Node2D
-## M2: One test stage — enter, fight telegraphed enemies, collect essence. Respawn on death.
+## Test arena: combat loop + in-fight equipment swap (M3 QA) + pause save/load (M4).
 
 @export var essence_pickup_scene: PackedScene
 var _spawn_position: Vector2
 var _player: Node2D
 var _cleared_shown: bool = false
 
+
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	var marker = get_node_or_null("RespawnPosition")
 	if marker:
 		_spawn_position = marker.global_position
@@ -25,7 +27,162 @@ func _ready() -> void:
 
 	if GameState.essence_changed.is_connected(_update_essence_label) == false:
 		GameState.essence_changed.connect(_update_essence_label)
+	if GameState.equipment_changed.is_connected(_refresh_equipment_labels) == false:
+		GameState.equipment_changed.connect(_refresh_equipment_labels)
 	_update_essence_label(0, &"")
+	_refresh_equipment_labels()
+
+	var hub_btn = get_node_or_null("UI/HubButton")
+	if hub_btn is Button:
+		hub_btn.pressed.connect(_on_hub_pressed)
+	var w_prev = get_node_or_null("UI/EquipmentPanel/WeaponRow/WeaponPrev")
+	var w_next = get_node_or_null("UI/EquipmentPanel/WeaponRow/WeaponNext")
+	var s_prev = get_node_or_null("UI/EquipmentPanel/SecondaryRow/SecondaryPrev")
+	var s_next = get_node_or_null("UI/EquipmentPanel/SecondaryRow/SecondaryNext")
+	if w_prev is Button:
+		w_prev.pressed.connect(_cycle_weapon.bind(-1))
+	if w_next is Button:
+		w_next.pressed.connect(_cycle_weapon.bind(1))
+	if s_prev is Button:
+		s_prev.pressed.connect(_cycle_secondary.bind(-1))
+	if s_next is Button:
+		s_next.pressed.connect(_cycle_secondary.bind(1))
+
+	var resume = get_node_or_null("PauseMenu/VBox/ResumeButton")
+	var save_b = get_node_or_null("PauseMenu/VBox/SaveButton")
+	var load_b = get_node_or_null("PauseMenu/VBox/LoadButton")
+	var hub_pb = get_node_or_null("PauseMenu/VBox/HubPauseButton")
+	if resume is Button:
+		resume.pressed.connect(_resume_pause)
+	if save_b is Button:
+		save_b.pressed.connect(_pause_save)
+	if load_b is Button:
+		load_b.pressed.connect(_pause_load)
+	if hub_pb is Button:
+		hub_pb.pressed.connect(_return_hub_from_pause)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause_game"):
+		_toggle_pause()
+		get_viewport().set_input_as_handled()
+		return
+	if get_tree().paused:
+		return
+	if event.is_action_pressed("equip_weapon_prev"):
+		_cycle_weapon(-1)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("equip_weapon_next"):
+		_cycle_weapon(1)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("equip_secondary_prev"):
+		_cycle_secondary(-1)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("equip_secondary_next"):
+		_cycle_secondary(1)
+		get_viewport().set_input_as_handled()
+
+
+func _toggle_pause() -> void:
+	var p: bool = not get_tree().paused
+	get_tree().paused = p
+	var pm = get_node_or_null("PauseMenu")
+	if pm:
+		pm.visible = p
+	if p:
+		AudioManager.play_ui()
+
+
+func _resume_pause() -> void:
+	AudioManager.play_ui()
+	get_tree().paused = false
+	var pm = get_node_or_null("PauseMenu")
+	if pm:
+		pm.visible = false
+
+
+func _pause_save() -> void:
+	AudioManager.play_ui()
+	SaveSystem.save_game()
+
+
+func _pause_load() -> void:
+	AudioManager.play_ui()
+	SaveSystem.load_game()
+	_refresh_equipment_labels()
+	_update_essence_label(0, &"")
+
+
+func _return_hub_from_pause() -> void:
+	AudioManager.play_ui()
+	get_tree().paused = false
+	SaveSystem.save_game()
+	get_tree().change_scene_to_file("res://scenes/hub/hub.tscn")
+
+
+func _on_hub_pressed() -> void:
+	AudioManager.play_ui()
+	SaveSystem.save_game()
+	get_tree().change_scene_to_file("res://scenes/hub/hub.tscn")
+
+
+func _weapon_ids() -> Array[StringName]:
+	var out: Array[StringName] = []
+	for id in WeaponConfig.WEAPON_IDS:
+		out.append(id)
+	return out
+
+
+func _secondary_ids() -> Array[StringName]:
+	var out: Array[StringName] = [&""]
+	for id in SecondaryItemConfig.ITEM_IDS:
+		out.append(id)
+	return out
+
+
+func _cycle_weapon(delta_idx: int) -> void:
+	var list: Array[StringName] = _weapon_ids()
+	if list.is_empty():
+		return
+	var idx: int = list.find(GameState.main_weapon_id)
+	if idx < 0:
+		idx = 0
+	idx = posmod(idx + delta_idx, list.size())
+	GameState.equip_main_weapon(list[idx])
+	AudioManager.play_ui()
+	_refresh_equipment_labels()
+
+
+func _cycle_secondary(delta_idx: int) -> void:
+	var list: Array[StringName] = _secondary_ids()
+	var idx: int = list.find(GameState.secondary_item_id)
+	if idx < 0:
+		idx = 0
+	idx = posmod(idx + delta_idx, list.size())
+	GameState.equip_secondary_item(list[idx])
+	AudioManager.play_ui()
+	_refresh_equipment_labels()
+
+
+func _display_weapon(id: StringName) -> String:
+	if id.is_empty():
+		return "(none)"
+	return WeaponConfig.get_display_name(id)
+
+
+func _display_secondary(id: StringName) -> String:
+	if id.is_empty():
+		return "(none)"
+	return SecondaryItemConfig.get_display_name(id)
+
+
+func _refresh_equipment_labels() -> void:
+	var wl = get_node_or_null("UI/EquipmentPanel/WeaponRow/WeaponLabel")
+	if wl is Label:
+		wl.text = "Weapon: %s" % _display_weapon(GameState.main_weapon_id)
+	var sl = get_node_or_null("UI/EquipmentPanel/SecondaryRow/SecondaryLabel")
+	if sl is Label:
+		sl.text = "Secondary: %s" % _display_secondary(GameState.secondary_item_id)
 
 
 func respawn_player(player: Node2D) -> void:
@@ -66,7 +223,6 @@ func _process(_delta: float) -> void:
 			enl.text = "Energy: %d/%d" % [_player.current_energy, _player.max_energy]
 	_update_essence_label(0, &"")
 
-	# M2.5: Show "Enemies cleared!" when all enemies defeated
 	var enemies = get_tree().get_nodes_in_group("enemy")
 	var count := 0
 	for e in enemies:

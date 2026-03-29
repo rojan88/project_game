@@ -17,6 +17,7 @@ extends Control
 @onready var secondary_label: Label = $MarginContainer/VBox/InventoryPanel/SecondaryRow/SecondaryLabel
 @onready var cycle_primary_btn: Button = $MarginContainer/VBox/InventoryPanel/PrimaryRow/CyclePrimaryButton
 @onready var cycle_secondary_btn: Button = $MarginContainer/VBox/InventoryPanel/SecondaryRow/CycleSecondaryButton
+@onready var practice_arena_btn: Button = $MarginContainer/VBox/PracticeArenaButton
 
 func _ready() -> void:
 	# Let clicks pass through to buttons (root Control can block otherwise)
@@ -40,21 +41,23 @@ func _ready() -> void:
 	if region_8_btn: region_8_btn.pressed.connect(_on_region_8_pressed)
 	if cycle_primary_btn: cycle_primary_btn.pressed.connect(_on_cycle_primary_pressed)
 	if cycle_secondary_btn: cycle_secondary_btn.pressed.connect(_on_cycle_secondary_pressed)
+	if practice_arena_btn: practice_arena_btn.pressed.connect(_on_practice_arena_pressed)
 	_refresh_layout()
 
 
 func _refresh_layout() -> void:
-	var need_class: bool = GameState.player_class.is_empty()
+	# Class pick is optional; hub is usable immediately (inventory + regions).
 	if class_panel:
-		class_panel.visible = need_class
+		class_panel.visible = false
 	if region_panel:
-		region_panel.visible = not need_class
+		region_panel.visible = true
 	if inventory_panel:
-		inventory_panel.visible = not need_class
+		inventory_panel.visible = true
 	_update_region_buttons()
 	_update_inventory_labels()
 	if status_label:
-		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, GameState.player_class if not GameState.player_class.is_empty() else "—"]
+		var cls: String = str(GameState.player_class) if not GameState.player_class.is_empty() else "—"
+		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, cls]
 
 
 func _update_region_buttons() -> void:
@@ -90,6 +93,12 @@ func _enter_region(region: int) -> void:
 	get_tree().change_scene_to_file("res://scenes/stages/stage.tscn")
 
 
+func _on_practice_arena_pressed() -> void:
+	AudioManager.play_ui()
+	SaveSystem.save_game()
+	get_tree().change_scene_to_file("res://scenes/main/test_arena.tscn")
+
+
 func _update_inventory_labels() -> void:
 	if primary_label:
 		primary_label.text = "Primary: %s" % (_item_display_name(GameState.primary_item_id))
@@ -103,15 +112,18 @@ func _item_display_name(item_id: StringName) -> String:
 	var wn: String = WeaponConfig.get_display_name(item_id)
 	if wn != str(item_id):
 		return wn
+	var sn: String = SecondaryItemConfig.get_display_name(item_id)
+	if sn != str(item_id):
+		return sn
 	return ItemConfig.get_display_name(item_id)
 
 
 func _on_cycle_primary_pressed() -> void:
-	var list: Array[StringName] = _inventory_list_with_empty()
+	AudioManager.play_ui()
+	var list: Array[StringName] = _primary_cycle_ids()
 	if list.is_empty():
 		return
-	var current: String = String(GameState.primary_item_id)
-	var idx: int = list.find(StringName(current))
+	var idx: int = list.find(GameState.primary_item_id)
 	if idx < 0:
 		idx = 0
 	idx = (idx + 1) % list.size()
@@ -120,11 +132,11 @@ func _on_cycle_primary_pressed() -> void:
 
 
 func _on_cycle_secondary_pressed() -> void:
-	var list: Array[StringName] = _inventory_list_with_empty()
+	AudioManager.play_ui()
+	var list: Array[StringName] = _secondary_cycle_ids()
 	if list.is_empty():
 		return
-	var current: String = String(GameState.secondary_item_id)
-	var idx: int = list.find(StringName(current))
+	var idx: int = list.find(GameState.secondary_item_id)
 	if idx < 0:
 		idx = 0
 	idx = (idx + 1) % list.size()
@@ -132,13 +144,37 @@ func _on_cycle_secondary_pressed() -> void:
 	_update_inventory_labels()
 
 
-func _inventory_list_with_empty() -> Array[StringName]:
-	var out: Array[StringName] = [&""]
+func _primary_cycle_ids() -> Array[StringName]:
+	var out: Array[StringName] = []
+	var seen: Dictionary = {}
+	for id in WeaponConfig.WEAPON_IDS:
+		out.append(id)
+		seen[id] = true
 	for s in GameState.inventory:
-		out.append(StringName(s))
+		var sid: StringName = StringName(s)
+		if WeaponConfig.DATA.has(sid) and not seen.has(sid):
+			out.append(sid)
+			seen[sid] = true
+	return out
+
+
+func _secondary_cycle_ids() -> Array[StringName]:
+	var out: Array[StringName] = []
+	var seen: Dictionary = {}
+	out.append(&"")
+	seen[&""] = true
+	for id in SecondaryItemConfig.ITEM_IDS:
+		out.append(id)
+		seen[id] = true
+	for s in GameState.inventory:
+		var sid: StringName = StringName(s)
+		if SecondaryItemConfig.DATA.has(sid) and not seen.has(sid):
+			out.append(sid)
+			seen[sid] = true
 	return out
 
 
 func _process(_delta: float) -> void:
-	if status_label and (region_panel == null or region_panel.visible):
-		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, GameState.player_class if not GameState.player_class.is_empty() else "—"]
+	if status_label:
+		var cls: String = str(GameState.player_class) if not GameState.player_class.is_empty() else "—"
+		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, cls]

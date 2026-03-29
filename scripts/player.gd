@@ -52,7 +52,16 @@ func _ready() -> void:
 		hitbox.monitorable = false
 	if GameState.active_companion_changed.is_connected(_refresh_companion) == false:
 		GameState.active_companion_changed.connect(_refresh_companion)
+	if GameState.equipment_changed.is_connected(_on_loadout_changed) == false:
+		GameState.equipment_changed.connect(_on_loadout_changed)
+	if GameState.player_progress_changed.is_connected(_on_loadout_changed) == false:
+		GameState.player_progress_changed.connect(_on_loadout_changed)
 	_refresh_companion(GameState.active_companion_id)
+
+
+func _on_loadout_changed() -> void:
+	_apply_loadout_stats()
+	current_health = mini(current_health, max_health)
 
 
 func _apply_loadout_stats() -> void:
@@ -162,6 +171,7 @@ func _process_dodge(delta: float) -> void:
 func _start_dodge() -> void:
 	_dodge_timer = dodge_duration
 	_invulnerable = true
+	AudioManager.play_dodge()
 
 
 func _process_attack(delta: float) -> void:
@@ -206,6 +216,7 @@ func _resolve_melee_hits() -> void:
 	)
 	var max_targets: int = 3 if mtype == MonsterConfig.TYPE_SPIRIT else 1
 	var mults: Array[float] = [1.0, 0.9, 0.8]
+	var landed: bool = false
 	for i in mini(max_targets, enemies.size()):
 		var e: Node2D = enemies[i]
 		if e in _attack_hit_targets:
@@ -214,10 +225,13 @@ func _resolve_melee_hits() -> void:
 		var dmg: int = maxi(1, int(ceil(float(base) * mults[i])))
 		if e.has_method("take_damage"):
 			e.take_damage(dmg, EnemyBase.DMG_FLAG_PLAYER)
+			landed = true
 		if e.has_method("apply_knockback"):
 			e.apply_knockback(global_position, 120.0)
 		var primary_chain: bool = (i == 0)
 		CombatEffects.apply_player_melee_effects(self, e, base, dmg, primary_chain)
+	if landed:
+		AudioManager.play_hit()
 
 
 func _update_facing_display() -> void:
@@ -288,6 +302,7 @@ func _try_companion_special() -> void:
 		if c.has_method("use_special"):
 			if c.use_special(global_position, _facing):
 				current_energy = maxi(0, current_energy - special_energy_cost)
+				AudioManager.play_ability()
 			return
 
 

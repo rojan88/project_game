@@ -112,6 +112,58 @@ offset_right = 220.0
 offset_bottom = 94.0
 text = "Monster: Neutral Blob"
 
+[node name="EquipmentPanel" type="VBoxContainer" parent="UI"]
+offset_left = 10.0
+offset_top = 96.0
+offset_right = 360.0
+offset_bottom = 150.0
+theme_override_constants/separation = 4
+
+[node name="WeaponRow" type="HBoxContainer" parent="UI/EquipmentPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WeaponLabel" type="Label" parent="UI/EquipmentPanel/WeaponRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Weapon: Iron Sword"
+
+[node name="WeaponPrev" type="Button" parent="UI/EquipmentPanel/WeaponRow"]
+layout_mode = 2
+text = "<"
+
+[node name="WeaponNext" type="Button" parent="UI/EquipmentPanel/WeaponRow"]
+layout_mode = 2
+text = ">"
+
+[node name="SecondaryRow" type="HBoxContainer" parent="UI/EquipmentPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SecondaryLabel" type="Label" parent="UI/EquipmentPanel/SecondaryRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Secondary: (none)"
+
+[node name="SecondaryPrev" type="Button" parent="UI/EquipmentPanel/SecondaryRow"]
+layout_mode = 2
+text = "<"
+
+[node name="SecondaryNext" type="Button" parent="UI/EquipmentPanel/SecondaryRow"]
+layout_mode = 2
+text = ">"
+
+[node name="HubButton" type="Button" parent="UI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 30.0
+grow_horizontal = 0
+text = "Hub"
+
 [node name="ClearedLabel" type="Label" parent="UI"]
 anchors_preset = 8
 anchor_left = 0.5
@@ -141,7 +193,56 @@ offset_right = -8.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "WASD move | J attack | K dodge | L special | Tab monster | U unlock"
+text = "WASD | J atk | K dodge | L spec | Tab/U | [ ] weapon | , . secondary | Esc pause"
 horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 2
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+process_mode = 3
+visible = false
+
+[node name="Dim" type="ColorRect" parent="PauseMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+mouse_filter = 0
+
+[node name="VBox" type="VBoxContainer" parent="PauseMenu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -72.0
+offset_right = 80.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="PauseTitle" type="Label" parent="PauseMenu/VBox"]
+layout_mode = 2
+text = "Paused"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseMenu/VBox"]
+layout_mode = 2
+text = "Resume"
+
+[node name="SaveButton" type="Button" parent="PauseMenu/VBox"]
+layout_mode = 2
+text = "Save"
+
+[node name="LoadButton" type="Button" parent="PauseMenu/VBox"]
+layout_mode = 2
+text = "Load"
+
+[node name="HubPauseButton" type="Button" parent="PauseMenu/VBox"]
+layout_mode = 2
+text = "Return to Hub"
