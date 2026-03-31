@@ -86,10 +86,23 @@ func _update_hud() -> void:
 			var name_str: String = MonsterConfig.get_display_name(GameState.active_companion_id)
 			var lv: int = GameState.get_companion_level(GameState.active_companion_id)
 			cl.text = "Companion: %s Lv.%d" % [name_str, lv]
+	var sl = get_node_or_null("UI/StageLabel")
+	if sl is Label:
+		sl.text = "Region %d  Stage %d" % [GameState.current_region, GameState.current_stage_index + 1]
+	var wl = get_node_or_null("UI/WeaponLabel")
+	if wl is Label:
+		wl.text = "Weapon: %s" % WeaponConfig.get_display_name(GameState.main_weapon_id)
+	var il = get_node_or_null("UI/SecondaryLabel")
+	if il is Label:
+		if GameState.secondary_item_id.is_empty():
+			il.text = "Secondary: (none)"
+		else:
+			il.text = "Secondary: %s" % SecondaryItemConfig.get_display_name(GameState.secondary_item_id)
 
 
 func _on_stage_cleared() -> void:
 	_cleared = true
+	AudioManager.play_ability()
 	# Reward: player exp
 	var exp_reward: int = 5 + GameState.current_stage_index * 3
 	if StageConfig.is_boss_stage(GameState.current_region, GameState.current_stage_index):

@@ -98,6 +98,27 @@ offset_right = 200.0
 offset_bottom = 94.0
 text = "Companion: (U unlock)"
 
+[node name="StageLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 98.0
+offset_right = 200.0
+offset_bottom = 116.0
+text = "Region 1  Stage 1"
+
+[node name="WeaponLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 120.0
+offset_right = 250.0
+offset_bottom = 138.0
+text = "Weapon: Iron Sword"
+
+[node name="SecondaryLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 142.0
+offset_right = 250.0
+offset_bottom = 160.0
+text = "Secondary: (none)"
+
 [node name="StageClearLabel" type="Label" parent="UI"]
 anchors_preset = 8
 anchor_left = 0.5
@@ -127,7 +148,7 @@ offset_right = -8.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "WASD move | J attack | K dodge | L special | Tab cycle | U unlock"
+text = "WASD move | J attack | K dodge | L special | Tab cycle companion | U unlock companion"
 horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 2

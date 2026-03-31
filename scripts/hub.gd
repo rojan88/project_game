@@ -18,6 +18,9 @@ extends Control
 @onready var cycle_primary_btn: Button = $MarginContainer/VBox/InventoryPanel/PrimaryRow/CyclePrimaryButton
 @onready var cycle_secondary_btn: Button = $MarginContainer/VBox/InventoryPanel/SecondaryRow/CycleSecondaryButton
 @onready var practice_arena_btn: Button = $MarginContainer/VBox/PracticeArenaButton
+@onready var save_btn: Button = $MarginContainer/VBox/SaveRow/SaveButton
+@onready var load_btn: Button = $MarginContainer/VBox/SaveRow/LoadButton
+@onready var save_status_label: Label = $MarginContainer/VBox/SaveStatusLabel
 
 func _ready() -> void:
 	# Let clicks pass through to buttons (root Control can block otherwise)
@@ -42,6 +45,8 @@ func _ready() -> void:
 	if cycle_primary_btn: cycle_primary_btn.pressed.connect(_on_cycle_primary_pressed)
 	if cycle_secondary_btn: cycle_secondary_btn.pressed.connect(_on_cycle_secondary_pressed)
 	if practice_arena_btn: practice_arena_btn.pressed.connect(_on_practice_arena_pressed)
+	if save_btn: save_btn.pressed.connect(_on_save_pressed)
+	if load_btn: load_btn.pressed.connect(_on_load_pressed)
 	_refresh_layout()
 
 
@@ -55,6 +60,7 @@ func _refresh_layout() -> void:
 		inventory_panel.visible = true
 	_update_region_buttons()
 	_update_inventory_labels()
+	_update_save_status()
 	if status_label:
 		var cls: String = str(GameState.player_class) if not GameState.player_class.is_empty() else "—"
 		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, cls]
@@ -88,8 +94,10 @@ func _on_region_8_pressed() -> void: _enter_region(8)
 
 
 func _enter_region(region: int) -> void:
+	AudioManager.play_ui()
 	GameState.current_region = region
 	GameState.current_stage_index = 0
+	SaveSystem.save_game()
 	get_tree().change_scene_to_file("res://scenes/stages/stage.tscn")
 
 
@@ -97,6 +105,27 @@ func _on_practice_arena_pressed() -> void:
 	AudioManager.play_ui()
 	SaveSystem.save_game()
 	get_tree().change_scene_to_file("res://scenes/main/test_arena.tscn")
+
+
+func _on_save_pressed() -> void:
+	AudioManager.play_ui()
+	var ok: bool = SaveSystem.save_game()
+	if save_status_label:
+		save_status_label.text = "Save: %s" % ("progress saved" if ok else "failed")
+
+
+func _on_load_pressed() -> void:
+	AudioManager.play_ui()
+	var ok: bool = SaveSystem.load_game()
+	if ok:
+		_refresh_layout()
+	if save_status_label:
+		save_status_label.text = "Save: %s" % ("loaded from disk" if ok else "no save found")
+
+
+func _update_save_status() -> void:
+	if save_status_label:
+		save_status_label.text = "Save: %s" % ("file detected" if SaveSystem.has_save() else "no file yet")
 
 
 func _update_inventory_labels() -> void:
@@ -178,3 +207,4 @@ func _process(_delta: float) -> void:
 	if status_label:
 		var cls: String = str(GameState.player_class) if not GameState.player_class.is_empty() else "—"
 		status_label.text = "HP: %d  Essence: %d  Lv.%d  Class: %s" % [GameState.get_player_max_health(), GameState.get_essence_count(), GameState.player_level, cls]
+	_update_save_status()
