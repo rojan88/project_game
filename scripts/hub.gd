@@ -1,6 +1,9 @@
 extends Control
 ## Hub town: class selection (first time), then select region. Shows only unlocked regions.
 
+const FLOOR_TILE_ATLAS_PATH: String = "res://art/fd/tilesets/FD_Ground_Tiles.png"
+const ICONS_ATLAS_PATH: String = "res://art/fd/icons/Fantasy_Dreamland_Icons_Transparent.png"
+
 @onready var class_panel: Control = $MarginContainer/VBox/ClassPanel
 @onready var region_panel: Control = $MarginContainer/VBox/RegionPanel
 @onready var status_label: Label = $MarginContainer/VBox/StatusLabel
@@ -47,6 +50,7 @@ func _ready() -> void:
 	if practice_arena_btn: practice_arena_btn.pressed.connect(_on_practice_arena_pressed)
 	if save_btn: save_btn.pressed.connect(_on_save_pressed)
 	if load_btn: load_btn.pressed.connect(_on_load_pressed)
+	_build_hub_art_background()
 	_refresh_layout()
 
 
@@ -133,6 +137,69 @@ func _update_inventory_labels() -> void:
 		primary_label.text = "Primary: %s" % (_item_display_name(GameState.primary_item_id))
 	if secondary_label:
 		secondary_label.text = "Secondary: %s" % (_item_display_name(GameState.secondary_item_id))
+	_set_item_icon("MarginContainer/VBox/InventoryPanel/PrimaryRow/PrimaryIcon", GameState.primary_item_id, true)
+	_set_item_icon("MarginContainer/VBox/InventoryPanel/SecondaryRow/SecondaryIcon", GameState.secondary_item_id, false)
+
+
+func _build_hub_art_background() -> void:
+	var atlas: Texture2D = load(FLOOR_TILE_ATLAS_PATH) as Texture2D
+	if atlas == null:
+		return
+	var old := get_node_or_null("ArtTiles")
+	if old:
+		old.queue_free()
+	var root := Node2D.new()
+	root.name = "ArtTiles"
+	root.z_index = -1
+	add_child(root)
+	var tile_size := Vector2(16, 16)
+	var cols: int = 26
+	var rows: int = 16
+	var pattern: Array[Vector2i] = [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(1, 1)]
+	for y in rows:
+		for x in cols:
+			var at := AtlasTexture.new()
+			at.atlas = atlas
+			var pick: Vector2i = pattern[(x + y * 2) % pattern.size()]
+			at.region = Rect2(pick.x * tile_size.x, pick.y * tile_size.y, tile_size.x, tile_size.y)
+			var s := Sprite2D.new()
+			s.centered = false
+			s.texture = at
+			s.modulate = Color(1, 1, 1, 0.35)
+			s.position = Vector2(-16 + x * tile_size.x, -16 + y * tile_size.y)
+			root.add_child(s)
+
+
+func _set_item_icon(node_path: String, item_id: StringName, is_weapon: bool) -> void:
+	var icon_node := get_node_or_null(node_path)
+	if icon_node == null or not (icon_node is TextureRect):
+		return
+	var atlas: Texture2D = load(ICONS_ATLAS_PATH) as Texture2D
+	if atlas == null:
+		return
+	var rect := Rect2(0, 0, 16, 16)
+	if is_weapon:
+		match String(item_id):
+			"sword": rect = Rect2(16, 0, 16, 16)
+			"dagger": rect = Rect2(32, 0, 16, 16)
+			"spear": rect = Rect2(48, 0, 16, 16)
+			"greatsword": rect = Rect2(64, 0, 16, 16)
+			_: rect = Rect2(16, 0, 16, 16)
+	else:
+		if item_id.is_empty():
+			rect = Rect2(0, 0, 16, 16)
+		else:
+			match String(item_id):
+				"boots": rect = Rect2(0, 16, 16, 16)
+				"charm": rect = Rect2(16, 16, 16, 16)
+				"relic": rect = Rect2(32, 16, 16, 16)
+				"band": rect = Rect2(48, 16, 16, 16)
+				"focus_crystal": rect = Rect2(64, 16, 16, 16)
+				_: rect = Rect2(0, 16, 16, 16)
+	var at := AtlasTexture.new()
+	at.atlas = atlas
+	at.region = rect
+	(icon_node as TextureRect).texture = at
 
 
 func _item_display_name(item_id: StringName) -> String:

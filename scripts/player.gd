@@ -46,7 +46,7 @@ func _ready() -> void:
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	_apply_loadout_stats()
 	current_health = max_health
-	current_energy = mini(current_energy, _effective_max_energy())
+	current_energy = _effective_max_energy()
 	if hitbox:
 		hitbox.monitoring = false
 		hitbox.monitorable = false

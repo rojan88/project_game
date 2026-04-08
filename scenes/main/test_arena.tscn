@@ -21,6 +21,11 @@ script = ExtResource("1_script")
 [node name="RespawnPosition" type="Marker2D" parent="."]
 position = Vector2(192, 108)
 
+[node name="Background" type="Polygon2D" parent="."]
+z_index = -30
+color = Color(0.18, 0.24, 0.2, 1)
+polygon = PackedVector2Array(-40, -40, 440, -40, 440, 260, -40, 260)
+
 [node name="Floor" type="StaticBody2D" parent="."]
 collision_layer = 32
 collision_mask = 0
@@ -128,6 +133,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Weapon: Iron Sword"
 
+[node name="WeaponIcon" type="TextureRect" parent="UI/EquipmentPanel/WeaponRow"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+stretch_mode = 5
+
 [node name="WeaponPrev" type="Button" parent="UI/EquipmentPanel/WeaponRow"]
 layout_mode = 2
 text = "<"
@@ -144,6 +154,11 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Secondary: (none)"
+
+[node name="SecondaryIcon" type="TextureRect" parent="UI/EquipmentPanel/SecondaryRow"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+stretch_mode = 5
 
 [node name="SecondaryPrev" type="Button" parent="UI/EquipmentPanel/SecondaryRow"]
 layout_mode = 2

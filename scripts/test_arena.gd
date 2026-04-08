@@ -2,6 +2,8 @@ extends Node2D
 ## Test arena: combat loop + in-fight equipment swap (M3 QA) + pause save/load (M4).
 
 @export var essence_pickup_scene: PackedScene
+const FLOOR_TILE_ATLAS_PATH: String = "res://art/fd/tilesets/FD_Ground_Tiles.png"
+const ICONS_ATLAS_PATH: String = "res://art/fd/icons/Fantasy_Dreamland_Icons_Transparent.png"
 var _spawn_position: Vector2
 var _player: Node2D
 var _cleared_shown: bool = false
@@ -31,6 +33,7 @@ func _ready() -> void:
 		GameState.equipment_changed.connect(_refresh_equipment_labels)
 	_update_essence_label(0, &"")
 	_refresh_equipment_labels()
+	_build_art_floor()
 
 	var hub_btn = get_node_or_null("UI/HubButton")
 	if hub_btn is Button:
@@ -180,9 +183,71 @@ func _refresh_equipment_labels() -> void:
 	var wl = get_node_or_null("UI/EquipmentPanel/WeaponRow/WeaponLabel")
 	if wl is Label:
 		wl.text = "Weapon: %s" % _display_weapon(GameState.main_weapon_id)
+	_set_item_icon("UI/EquipmentPanel/WeaponRow/WeaponIcon", GameState.main_weapon_id, true)
 	var sl = get_node_or_null("UI/EquipmentPanel/SecondaryRow/SecondaryLabel")
 	if sl is Label:
 		sl.text = "Secondary: %s" % _display_secondary(GameState.secondary_item_id)
+	_set_item_icon("UI/EquipmentPanel/SecondaryRow/SecondaryIcon", GameState.secondary_item_id, false)
+
+
+func _build_art_floor() -> void:
+	var atlas: Texture2D = load(FLOOR_TILE_ATLAS_PATH) as Texture2D
+	if atlas == null:
+		return
+	var old := get_node_or_null("ArtFloor")
+	if old:
+		old.queue_free()
+	var root := Node2D.new()
+	root.name = "ArtFloor"
+	root.z_index = -25
+	add_child(root)
+	var cols: int = 26
+	var rows: int = 16
+	var tile_size := Vector2(16, 16)
+	var pattern: Array[Vector2i] = [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(1, 1)]
+	for y in rows:
+		for x in cols:
+			var at := AtlasTexture.new()
+			at.atlas = atlas
+			var pick: Vector2i = pattern[(x + y * 2) % pattern.size()]
+			at.region = Rect2(pick.x * tile_size.x, pick.y * tile_size.y, tile_size.x, tile_size.y)
+			var s := Sprite2D.new()
+			s.centered = false
+			s.texture = at
+			s.position = Vector2(-16 + x * tile_size.x, -16 + y * tile_size.y)
+			root.add_child(s)
+
+
+func _set_item_icon(node_path: String, item_id: StringName, is_weapon: bool) -> void:
+	var icon_node := get_node_or_null(node_path)
+	if icon_node == null or not (icon_node is TextureRect):
+		return
+	var atlas: Texture2D = load(ICONS_ATLAS_PATH) as Texture2D
+	if atlas == null:
+		return
+	var rect := Rect2(0, 0, 16, 16)
+	if is_weapon:
+		match String(item_id):
+			"sword": rect = Rect2(16, 0, 16, 16)
+			"dagger": rect = Rect2(32, 0, 16, 16)
+			"spear": rect = Rect2(48, 0, 16, 16)
+			"greatsword": rect = Rect2(64, 0, 16, 16)
+			_: rect = Rect2(16, 0, 16, 16)
+	else:
+		if item_id.is_empty():
+			rect = Rect2(0, 0, 16, 16)
+		else:
+			match String(item_id):
+				"boots": rect = Rect2(0, 16, 16, 16)
+				"charm": rect = Rect2(16, 16, 16, 16)
+				"relic": rect = Rect2(32, 16, 16, 16)
+				"band": rect = Rect2(48, 16, 16, 16)
+				"focus_crystal": rect = Rect2(64, 16, 16, 16)
+				_: rect = Rect2(0, 16, 16, 16)
+	var at := AtlasTexture.new()
+	at.atlas = atlas
+	at.region = rect
+	(icon_node as TextureRect).texture = at
 
 
 func respawn_player(player: Node2D) -> void:

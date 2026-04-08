@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://lunge_enemy"]
 
 [ext_resource type="Script" path="res://scripts/enemy_base.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://icon" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" path="res://art/fd/characters/enemy_lunge.png" id="2_icon"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(16, 16)
@@ -22,9 +22,12 @@ attack_duration = 0.35
 attack_cooldown = 1.5
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.5, 0.3, 0.9, 1)
 texture = ExtResource("2_icon")
-scale = Vector2(0.12, 0.12)
+hframes = 3
+vframes = 3
+frame = 1
+scale = Vector2(1.0, 1.0)
+modulate = Color(0.85, 0.75, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_body")
